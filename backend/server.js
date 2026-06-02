@@ -16,7 +16,6 @@ const config = {
     database: process.env.DB_NAME,
     options: { encrypt: true, trustServerCertificate: true }
 };
-
 let pool;
 async function getPool() {
     if (!pool) pool = await sql.connect(config);
@@ -36,7 +35,7 @@ app.get('/autores', async (req, res) => {
     try {
         const pool = await getPool();
         const termo = req.query.busca || req.query.nome;
-        let querySQL = 'SELECT id, nome FROM Autor';
+        let querySQL = 'SELECT id, nome FROMselect * from Area_Conhecimento ac  Autor';
         const request = pool.request();
         if (termo) {
             querySQL += ' WHERE nome LIKE @filtro';
@@ -50,11 +49,37 @@ app.get('/autores', async (req, res) => {
     }
 });
 
+app.get('/exemplares', async (req, res) => {
+    try {
+        const pool = await getPool();
+        const termo = req.query.busca;
+        let querySQL = `
+            SELECT 
+                e.id, 
+                e.numero_exemplar, 
+                e.idLivro, 
+                l.titulo AS titulo_livro
+                e.status AS status_exemplar
+           select * from Area_Conhecimento ac  FROM Exemplar e
+            INNER JOIN Livro l ON e.idLivro = l.id
+        `;
+        const request = pool.request();
+        if (termo) {
+            querySQL += ' WHERE l.titulo LIKE @filtro';
+            request.input('filtro', sql.VarChar, `%${termo}%`);
+        }
+        querySQL += ' ORDER BY e.id DESC';
+        const result = await request.query(querySQL);
+        res.json(result.recordset);
+    } catch (err) {
+        res.status(500).json({ erro: err.message });
+    }
+});
+
 app.get('/alunos', async (req, res) => {
     try {
         const pool = await getPool();
         const termo = req.query.busca;
-        // ✅ CORRIGIDO: coluna renomeada para dataNascimento
         let querySQL = 'SELECT id, nome, cpf, telefone, email, turma, dataNascimento, idEndereco FROM Aluno';
         const request = pool.request();
         if (termo) {
@@ -291,6 +316,7 @@ app.post('/areas-conhecimento', async (req, res) => {
         res.status(201).json({ mensagem: `Área de conhecimento '${nome}' inserida com sucesso!` });
     } catch (err) {
         res.status(500).json({ erro: err.message });
+// ─── POSTs ─────────────────────────────────
     }
 });
 
