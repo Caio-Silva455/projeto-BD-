@@ -1,0 +1,12 @@
+.step-card { transition: all 0.3s ease; }
+.step-card.locked { opacity: 0.4; pointer-events: none; }
+.step-card.completed { border-color: #10b981 !important; }
+.step-badge { transition: all 0.3s ease; }
+.step-badge.completed { background: #10b981 !important; color: white !important; }
+.step-badge.active { background: #243e58 !important; color: white !important; }
+.btn-primary { background: #243e58; transition: all 0.2s; }
+.btn-primary:hover { background: #334155; }
+.btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+.tag-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.3s ease forwards; }
